@@ -55,7 +55,6 @@
     transition: background 0.4s, color 0.4s;
   }
 
-  /* PAGE SYSTEM */
   .page {
     position: fixed;
     inset: 0;
@@ -84,7 +83,6 @@
     position: fixed;
   }
 
-  /* AUTH PAGE */
   .auth-page {
     background: var(--bg);
     background-image: radial-gradient(ellipse 80% 60% at 50% 0%, #1a1a1a 0%, #080808 70%);
@@ -167,10 +165,7 @@
     animation: fadeUp 0.6s 0.4s cubic-bezier(0.4,0,0.2,1) forwards;
   }
 
-  .field-wrap {
-    position: relative;
-    overflow: hidden;
-  }
+  .field-wrap { position: relative; overflow: hidden; }
 
   .field-wrap input {
     width: 100%;
@@ -245,7 +240,6 @@
   }
   .auth-success.show { opacity: 1; }
 
-  /* MAIN APP PAGE */
   .app-page { background: var(--bg); }
 
   .topbar {
@@ -366,6 +360,55 @@
   .setting-group input[type="text"]:focus { border-color: var(--border2); }
   .setting-group textarea { min-height: 140px; }
 
+  /* PROMPT PRESETS */
+  .preset-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .preset-btn {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text2);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    line-height: 1.4;
+  }
+  .preset-btn:hover { background: var(--bg3); color: var(--text); }
+  .preset-btn.active { border-color: var(--text2); color: var(--text); background: var(--bg3); }
+
+  .preset-name {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: inherit;
+  }
+  .preset-desc {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+
+  .custom-prompt-wrap {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+  }
+  .custom-prompt-wrap.open {
+    max-height: 300px;
+    opacity: 1;
+  }
+
   .save-btn {
     width: 100%;
     padding: 0.75rem;
@@ -403,7 +446,6 @@
     word-break: break-all;
   }
 
-  /* HERO */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -489,7 +531,6 @@
   .error-msg { margin-top: 1rem; color: var(--error); font-size: 0.85rem; text-align: center; opacity: 0; transition: opacity 0.3s; }
   .error-msg.show { opacity: 1; }
 
-  /* RESULTS */
   .results-section {
     width: 100%;
     max-width: 720px;
@@ -571,12 +612,10 @@
   <div class="auth-box">
     <div class="auth-logo">Nobody Likes Reading HW;</div>
     <div class="auth-tagline">Lets save you some time...</div>
-
     <div class="auth-tabs">
       <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Sign in</button>
       <button class="auth-tab" id="signupTab" onclick="switchTab('signup')">Create account</button>
     </div>
-
     <div class="auth-form">
       <div class="field-wrap">
         <input type="email" id="emailInput" placeholder=" " autocomplete="email">
@@ -625,9 +664,25 @@
       <p class="hint">Free key at aistudio.google.com — saved in your browser only.</p>
     </div>
     <div class="setting-group">
-      <label>Custom AI Prompt</label>
-      <textarea id="promptInput"></textarea>
-      <p class="hint">Use {{EXTRACT}} where the pasted text should appear.</p>
+      <label>AI Prompt</label>
+      <div class="preset-list">
+        <button class="preset-btn active" id="preset-0" onclick="selectPreset(0)">
+          <span class="preset-name">Quick bullets</span>
+          <span class="preset-desc">Bullet summary + 10 punchy discussion points</span>
+        </button>
+        <button class="preset-btn" id="preset-1" onclick="selectPreset(1)">
+          <span class="preset-name">Detailed paragraphs</span>
+          <span class="preset-desc">Flowing summary + conversational discussion points</span>
+        </button>
+        <button class="preset-btn" id="preset-2" onclick="selectPreset(2)">
+          <span class="preset-name">Custom</span>
+          <span class="preset-desc">Write your own prompt</span>
+        </button>
+      </div>
+      <div class="custom-prompt-wrap" id="customPromptWrap">
+        <textarea id="promptInput" placeholder="Write your prompt here. Use {{EXTRACT}} where the text should appear."></textarea>
+        <p class="hint">Use {{EXTRACT}} where the pasted text should appear.</p>
+      </div>
     </div>
     <button class="save-btn" onclick="saveSettings()">Save Settings</button>
     <p class="saved-notice" id="savedNotice">Saved.</p>
@@ -664,7 +719,11 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const DEFAULT_PROMPT = `You are analysing a text extract. Return ONLY valid JSON, no markdown, no backticks, no explanation.
+const PRESETS = [
+  {
+    id: 0,
+    name: 'Quick bullets',
+    prompt: `You are analysing a text extract. Return ONLY valid JSON, no markdown, no backticks, no explanation.
 
 Return this exact structure:
 {
@@ -677,7 +736,49 @@ Rules:
 - Discussion points: exactly 10, punchy, no fluff, 1-2 sentences max each, no prefixes or numbering
 
 Extract:
-{{EXTRACT}}`;
+{{EXTRACT}}`
+  },
+  {
+    id: 1,
+    name: 'Detailed paragraphs',
+    prompt: `You are analysing a text extract. Return ONLY valid JSON, no markdown, no backticks, no explanation.
+
+Return this exact structure:
+{
+  "summary": ["paragraph 1", "paragraph 2", "paragraph 3"],
+  "discussion_points": ["point 1", "point 2", "point 3", "point 4", "point 5", "point 6", "point 7", "point 8", "point 9", "point 10"]
+}
+
+Rules:
+- Summary: write a detailed summary using only information explicitly stated in the text. Do not add outside context. Write it as 2-3 flowing paragraphs covering every key point in the order they appear. Each paragraph goes in a separate array entry.
+- Discussion points: exactly 10. Each one is a maximum of two sentences — one sentence setting up an idea or observation from the text, followed by a question that challenges the reader to think about it. Accessible and conversational in tone, not academic. Rooted strictly in what the text says. No titles or numbers, just plain text.
+
+Extract:
+{{EXTRACT}}`
+  }
+];
+
+let selectedPreset = 0;
+
+function selectPreset(id) {
+  selectedPreset = id;
+  document.querySelectorAll('.preset-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === id);
+  });
+  const customWrap = document.getElementById('customPromptWrap');
+  if (id === 2) {
+    customWrap.classList.add('open');
+  } else {
+    customWrap.classList.remove('open');
+  }
+}
+
+function getActivePrompt() {
+  if (selectedPreset === 2) {
+    return document.getElementById('promptInput').value || PRESETS[0].prompt;
+  }
+  return PRESETS[selectedPreset].prompt;
+}
 
 let currentTab = 'login';
 
@@ -690,10 +791,8 @@ function switchTab(tab) {
 }
 
 function clearAuthMessages() {
-  const err = document.getElementById('authError');
-  const suc = document.getElementById('authSuccess');
-  err.classList.remove('show');
-  suc.classList.remove('show');
+  document.getElementById('authError').classList.remove('show');
+  document.getElementById('authSuccess').classList.remove('show');
 }
 
 function showAuthError(msg) {
@@ -712,12 +811,9 @@ async function handleAuth() {
   const email = document.getElementById('emailInput').value.trim();
   const password = document.getElementById('passwordInput').value;
   const btn = document.getElementById('authBtn');
-
   if (!email || !password) { showAuthError('Please fill in all fields.'); return; }
-
   btn.disabled = true;
   clearAuthMessages();
-
   try {
     if (currentTab === 'login') {
       const { error } = await sb.auth.signInWithPassword({ email, password });
@@ -778,10 +874,12 @@ async function handleSignOut() {
 function loadSettings() {
   const theme = localStorage.getItem('discuss_theme') || 'dark';
   const apiKey = localStorage.getItem('discuss_apikey') || '';
-  const prompt = localStorage.getItem('discuss_prompt') || DEFAULT_PROMPT;
+  const savedPreset = parseInt(localStorage.getItem('discuss_preset') || '0');
+  const customPrompt = localStorage.getItem('discuss_customprompt') || '';
   setTheme(theme, true);
   document.getElementById('apiKeyInput').value = apiKey;
-  document.getElementById('promptInput').value = prompt;
+  document.getElementById('promptInput').value = customPrompt;
+  selectPreset(savedPreset);
 }
 
 function setTheme(t, silent) {
@@ -793,7 +891,8 @@ function setTheme(t, silent) {
 
 function saveSettings() {
   localStorage.setItem('discuss_apikey', document.getElementById('apiKeyInput').value.trim());
-  localStorage.setItem('discuss_prompt', document.getElementById('promptInput').value);
+  localStorage.setItem('discuss_preset', selectedPreset);
+  localStorage.setItem('discuss_customprompt', document.getElementById('promptInput').value);
   const notice = document.getElementById('savedNotice');
   notice.classList.add('show');
   setTimeout(() => notice.classList.remove('show'), 2000);
@@ -821,9 +920,7 @@ async function generate() {
     return;
   }
 
-  const promptTemplate = localStorage.getItem('discuss_prompt') || DEFAULT_PROMPT;
-  const prompt = promptTemplate.replace('{{EXTRACT}}', extract);
-
+  const prompt = getActivePrompt().replace('{{EXTRACT}}', extract);
   const btn = document.getElementById('generateBtn');
   const dots = document.getElementById('loadingDots');
   const errMsg = document.getElementById('errorMsg');
@@ -898,7 +995,6 @@ function renderResults(summary, points) {
   }, 400);
 }
 
-// Check existing session on load
 sb.auth.getSession().then(({ data }) => {
   if (data?.session) goToApp();
 });
