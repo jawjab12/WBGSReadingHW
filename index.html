@@ -8,606 +8,131 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root[data-theme="dark"] {
-    --bg: #080808;
-    --bg2: #111;
-    --bg3: #161616;
-    --border: #222;
-    --border2: #2a2a2a;
-    --text: #e8e8e4;
-    --text2: #b0b0ac;
-    --text3: #666;
-    --text4: #444;
-    --btn-bg: #e8e8e4;
-    --btn-text: #080808;
+    --bg: #080808; --bg2: #111; --bg3: #161616; --border: #222; --border2: #2a2a2a;
+    --text: #e8e8e4; --text2: #b0b0ac; --text3: #666; --text4: #444;
+    --btn-bg: #e8e8e4; --btn-text: #080808;
     --hero-grad: radial-gradient(ellipse 80% 60% at 50% 0%, #1a1a1a 0%, #080808 70%);
     --divider: linear-gradient(90deg, transparent, #222, transparent);
-    --settings-bg: #0e0e0e;
-    --input-bg: #111;
-    --error: #e05a5a;
+    --settings-bg: #0e0e0e; --input-bg: #111; --error: #e05a5a;
   }
   :root[data-theme="light"] {
-    --bg: #f5f5f0;
-    --bg2: #ffffff;
-    --bg3: #eeeeea;
-    --border: #ddd;
-    --border2: #ccc;
-    --text: #111;
-    --text2: #444;
-    --text3: #888;
-    --text4: #bbb;
-    --btn-bg: #111;
-    --btn-text: #f5f5f0;
+    --bg: #f5f5f0; --bg2: #ffffff; --bg3: #eeeeea; --border: #ddd; --border2: #ccc;
+    --text: #111; --text2: #444; --text3: #888; --text4: #bbb;
+    --btn-bg: #111; --btn-text: #f5f5f0;
     --hero-grad: radial-gradient(ellipse 80% 60% at 50% 0%, #e8e8e3 0%, #f5f5f0 70%);
     --divider: linear-gradient(90deg, transparent, #ccc, transparent);
-    --settings-bg: #ebebeb;
-    --input-bg: #fff;
-    --error: #cc3333;
+    --settings-bg: #ebebeb; --input-bg: #fff; --error: #cc3333;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; transition: background 0.4s, color 0.4s; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-    transition: background 0.4s, color 0.4s;
-  }
+  .page { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; opacity: 0; transform: translateY(24px); pointer-events: none; transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1), transform 0.5s cubic-bezier(0.4,0,0.2,1); overflow-y: auto; }
+  .page.active { opacity: 1; transform: translateY(0); pointer-events: all; position: relative; min-height: 100vh; }
+  .page.exit { opacity: 0; transform: translateY(-24px); pointer-events: none; position: fixed; }
 
-  .page {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    opacity: 0;
-    transform: translateY(24px);
-    pointer-events: none;
-    transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1), transform 0.5s cubic-bezier(0.4,0,0.2,1);
-    overflow-y: auto;
-  }
-  .page.active {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: all;
-    position: relative;
-    min-height: 100vh;
-  }
-  .page.exit {
-    opacity: 0;
-    transform: translateY(-24px);
-    pointer-events: none;
-    position: fixed;
-  }
+  .auth-page { background: var(--bg); background-image: radial-gradient(ellipse 80% 60% at 50% 0%, #1a1a1a 0%, #080808 70%); }
+  :root[data-theme="light"] .auth-page { background-image: radial-gradient(ellipse 80% 60% at 50% 0%, #e8e8e3 0%, #f5f5f0 70%); }
 
-  .auth-page {
-    background: var(--bg);
-    background-image: radial-gradient(ellipse 80% 60% at 50% 0%, #1a1a1a 0%, #080808 70%);
-  }
-  :root[data-theme="light"] .auth-page {
-    background-image: radial-gradient(ellipse 80% 60% at 50% 0%, #e8e8e3 0%, #f5f5f0 70%);
-  }
-
-  .auth-box {
-    width: 100%;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .auth-logo {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.5rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    color: var(--text);
-    margin-bottom: 0.3rem;
-    opacity: 0;
-    transform: translateY(16px);
-    animation: fadeUp 0.6s 0.1s cubic-bezier(0.4,0,0.2,1) forwards;
-  }
-
-  .auth-tagline {
-    font-size: 0.8rem;
-    color: var(--text3);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 2.5rem;
-    opacity: 0;
-    transform: translateY(16px);
-    animation: fadeUp 0.6s 0.2s cubic-bezier(0.4,0,0.2,1) forwards;
-  }
-
-  .auth-tabs {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 2rem;
-    opacity: 0;
-    transform: translateY(16px);
-    animation: fadeUp 0.6s 0.3s cubic-bezier(0.4,0,0.2,1) forwards;
-  }
-
-  .auth-tab {
-    flex: 1;
-    background: none;
-    border: none;
-    padding: 0.75rem 0;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
-    color: var(--text3);
-    cursor: pointer;
-    position: relative;
-    transition: color 0.3s;
-  }
-  .auth-tab::after {
-    content: '';
-    position: absolute;
-    bottom: -1px; left: 0; right: 0;
-    height: 1px;
-    background: var(--text);
-    transform: scaleX(0);
-    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-  }
+  .auth-box { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 0; }
+  .auth-logo { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: -0.03em; color: var(--text); margin-bottom: 0.3rem; opacity: 0; transform: translateY(16px); animation: fadeUp 0.6s 0.1s cubic-bezier(0.4,0,0.2,1) forwards; }
+  .auth-tagline { font-size: 0.8rem; color: var(--text3); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2.5rem; opacity: 0; transform: translateY(16px); animation: fadeUp 0.6s 0.2s cubic-bezier(0.4,0,0.2,1) forwards; }
+  .auth-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 2rem; opacity: 0; transform: translateY(16px); animation: fadeUp 0.6s 0.3s cubic-bezier(0.4,0,0.2,1) forwards; }
+  .auth-tab { flex: 1; background: none; border: none; padding: 0.75rem 0; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--text3); cursor: pointer; position: relative; transition: color 0.3s; }
+  .auth-tab::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 1px; background: var(--text); transform: scaleX(0); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
   .auth-tab.active { color: var(--text); }
   .auth-tab.active::after { transform: scaleX(1); }
-
-  .auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    opacity: 0;
-    transform: translateY(16px);
-    animation: fadeUp 0.6s 0.4s cubic-bezier(0.4,0,0.2,1) forwards;
-  }
-
-  .field-wrap { position: relative; overflow: hidden; }
-
-  .field-wrap input {
-    width: 100%;
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0.9rem 1rem;
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.3s;
-  }
-  .field-wrap input::placeholder { color: var(--text4); }
+  .auth-form { display: flex; flex-direction: column; gap: 1rem; opacity: 0; transform: translateY(16px); animation: fadeUp 0.6s 0.4s cubic-bezier(0.4,0,0.2,1) forwards; }
+  .field-wrap { position: relative; }
+  .field-wrap input { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 1.4rem 1rem 0.4rem; color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.3s; }
+  .field-wrap input::placeholder { color: transparent; }
   .field-wrap input:focus { border-color: var(--border2); }
-
-  .field-label {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.85rem;
-    color: var(--text4);
-    pointer-events: none;
-    transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
-  }
-  .field-wrap input:focus ~ .field-label,
-  .field-wrap input:not(:placeholder-shown) ~ .field-label {
-    top: 0.3rem;
-    font-size: 0.65rem;
-    letter-spacing: 0.08em;
-    color: var(--text3);
-  }
-  .field-wrap input { padding-top: 1.4rem; padding-bottom: 0.4rem; }
-
-  .auth-btn {
-    width: 100%;
-    padding: 1rem;
-    background: var(--btn-bg);
-    color: var(--btn-text);
-    border: none;
-    border-radius: 10px;
-    font-family: 'Syne', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s;
-    margin-top: 0.5rem;
-  }
+  .field-label { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 0.85rem; color: var(--text4); pointer-events: none; transition: all 0.25s cubic-bezier(0.4,0,0.2,1); }
+  .field-wrap input:focus ~ .field-label, .field-wrap input:not(:placeholder-shown) ~ .field-label { top: 0.3rem; font-size: 0.65rem; letter-spacing: 0.08em; color: var(--text3); transform: none; }
+  .auth-btn { width: 100%; padding: 1rem; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: opacity 0.2s, transform 0.15s; margin-top: 0.5rem; }
   .auth-btn:hover { opacity: 0.88; }
   .auth-btn:active { transform: scale(0.99); }
   .auth-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
-  .auth-error {
-    font-size: 0.8rem;
-    color: var(--error);
-    text-align: center;
-    min-height: 1.2rem;
-    transition: opacity 0.3s;
-    opacity: 0;
-  }
+  .auth-error { font-size: 0.8rem; color: var(--error); text-align: center; min-height: 1.2rem; transition: opacity 0.3s; opacity: 0; }
   .auth-error.show { opacity: 1; }
-
-  .auth-success {
-    font-size: 0.8rem;
-    color: #5a9e6f;
-    text-align: center;
-    min-height: 1.2rem;
-    transition: opacity 0.3s;
-    opacity: 0;
-  }
+  .auth-success { font-size: 0.8rem; color: #5a9e6f; text-align: center; min-height: 1.2rem; transition: opacity 0.3s; opacity: 0; }
   .auth-success.show { opacity: 1; }
 
   .app-page { background: var(--bg); }
-
-  .topbar {
-    position: fixed;
-    top: 0; right: 0;
-    padding: 1rem 1.5rem;
-    z-index: 100;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    opacity: 0;
-    transform: translateY(-8px);
-    transition: opacity 0.4s, transform 0.4s;
-  }
+  .topbar { position: fixed; top: 0; right: 0; padding: 1rem 1.5rem; z-index: 100; display: flex; gap: 8px; align-items: center; opacity: 0; transform: translateY(-8px); transition: opacity 0.4s, transform 0.4s; }
   .topbar.visible { opacity: 1; transform: translateY(0); }
-
-  .icon-btn {
-    background: none;
-    border: 1px solid var(--border2);
-    color: var(--text3);
-    width: 36px; height: 36px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    display: flex; align-items: center; justify-content: center;
-    transition: border-color 0.2s, color 0.2s, background 0.2s;
-  }
+  .icon-btn { background: none; border: 1px solid var(--border2); color: var(--text3); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; transition: border-color 0.2s, color 0.2s, background 0.2s; }
   .icon-btn:hover { color: var(--text2); background: var(--bg2); }
-
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 199;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-  }
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 199; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
   .overlay.active { opacity: 1; pointer-events: all; }
-
-  .settings-panel {
-    position: fixed;
-    top: 0; right: -360px;
-    width: 320px;
-    height: 100vh;
-    background: var(--settings-bg);
-    border-left: 1px solid var(--border);
-    z-index: 200;
-    transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
-    overflow-y: auto;
-    padding: 2rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
+  .settings-panel { position: fixed; top: 0; right: -360px; width: 320px; height: 100vh; background: var(--settings-bg); border-left: 1px solid var(--border); z-index: 200; transition: right 0.35s cubic-bezier(0.4,0,0.2,1); overflow-y: auto; padding: 2rem 1.5rem; display: flex; flex-direction: column; gap: 2rem; }
   .settings-panel.open { right: 0; }
-
-  .settings-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .settings-header h2 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--text);
-  }
-  .close-btn {
-    background: none;
-    border: none;
-    color: var(--text3);
-    cursor: pointer;
-    font-size: 1.2rem;
-  }
-
-  .setting-group label {
-    display: block;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: 0.75rem;
-  }
-
+  .settings-header { display: flex; justify-content: space-between; align-items: center; }
+  .settings-header h2 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); }
+  .close-btn { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 1.2rem; }
+  .setting-group label { display: block; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text3); margin-bottom: 0.75rem; }
   .theme-toggle { display: flex; gap: 8px; }
-  .theme-opt {
-    flex: 1;
-    padding: 0.6rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--bg2);
-    color: var(--text2);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
-    cursor: pointer;
-    text-align: center;
-    transition: border-color 0.2s, color 0.2s;
-  }
+  .theme-opt { flex: 1; padding: 0.6rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg2); color: var(--text2); font-family: 'Inter', sans-serif; font-size: 0.8rem; cursor: pointer; text-align: center; transition: border-color 0.2s, color 0.2s; }
   .theme-opt.active { border-color: var(--text2); color: var(--text); }
-
-  .setting-group textarea,
-  .setting-group input[type="text"] {
-    width: 100%;
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.75rem;
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
-    line-height: 1.6;
-    resize: vertical;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .setting-group textarea:focus,
-  .setting-group input[type="text"]:focus { border-color: var(--border2); }
+  .setting-group textarea, .setting-group input[type="text"] { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem; color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.8rem; line-height: 1.6; resize: vertical; outline: none; transition: border-color 0.2s; }
+  .setting-group textarea:focus, .setting-group input[type="text"]:focus { border-color: var(--border2); }
   .setting-group textarea { min-height: 140px; }
-
-  /* PROMPT PRESETS */
-  .preset-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 10px;
-  }
-
-  .preset-btn {
-    width: 100%;
-    padding: 0.6rem 0.85rem;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text2);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
-    cursor: pointer;
-    text-align: left;
-    transition: border-color 0.2s, color 0.2s, background 0.2s;
-    line-height: 1.4;
-  }
+  .preset-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .preset-btn { width: 100%; padding: 0.6rem 0.85rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; color: var(--text2); font-family: 'Inter', sans-serif; font-size: 0.8rem; cursor: pointer; text-align: left; transition: border-color 0.2s, color 0.2s, background 0.2s; line-height: 1.4; }
   .preset-btn:hover { background: var(--bg3); color: var(--text); }
   .preset-btn.active { border-color: var(--text2); color: var(--text); background: var(--bg3); }
-
-  .preset-name {
-    display: block;
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: inherit;
-  }
-  .preset-desc {
-    display: block;
-    font-size: 0.7rem;
-    color: var(--text3);
-    margin-top: 2px;
-  }
-
-  .custom-prompt-wrap {
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
-  }
-  .custom-prompt-wrap.open {
-    max-height: 300px;
-    opacity: 1;
-  }
-
-  .save-btn {
-    width: 100%;
-    padding: 0.75rem;
-    background: var(--btn-bg);
-    color: var(--btn-text);
-    border: none;
-    border-radius: 8px;
-    font-family: 'Syne', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
+  .preset-name { display: block; font-size: 0.78rem; font-weight: 500; }
+  .preset-desc { display: block; font-size: 0.7rem; color: var(--text3); margin-top: 2px; }
+  .custom-prompt-wrap { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease; }
+  .custom-prompt-wrap.open { max-height: 300px; opacity: 1; }
+  .save-btn { width: 100%; padding: 0.75rem; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: 8px; font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
   .save-btn:hover { opacity: 0.85; }
-
-  .saved-notice {
-    font-size: 0.75rem;
-    color: var(--text3);
-    text-align: center;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
+  .saved-notice { font-size: 0.75rem; color: var(--text3); text-align: center; opacity: 0; transition: opacity 0.3s; }
   .saved-notice.show { opacity: 1; }
-
   .hint { font-size: 0.75rem; color: var(--text4); margin-top: 0.4rem; line-height: 1.5; }
+  .user-email { font-size: 0.75rem; color: var(--text3); text-align: center; padding: 0.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg2); word-break: break-all; }
 
-  .user-email {
-    font-size: 0.75rem;
-    color: var(--text3);
-    text-align: center;
-    padding: 0.5rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--bg2);
-    word-break: break-all;
-  }
-
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 4rem 2rem;
-    background: var(--hero-grad);
-  }
-
-  .hero-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-    text-align: center;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s 0.1s, transform 0.6s 0.1s;
-  }
+  .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 2rem; background: var(--hero-grad); }
+  .hero-title { font-family: 'Syne', sans-serif; font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700; letter-spacing: -0.03em; color: var(--text); margin-bottom: 0.5rem; text-align: center; opacity: 0; transform: translateY(20px); transition: opacity 0.6s 0.1s, transform 0.6s 0.1s; }
   .hero-title.visible { opacity: 1; transform: translateY(0); }
-
-  .subtitle {
-    font-size: 0.95rem;
-    color: var(--text3);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 3rem;
-    opacity: 0;
-    transform: translateY(16px);
-    transition: opacity 0.6s 0.2s, transform 0.6s 0.2s;
-  }
+  .subtitle { font-size: 0.95rem; color: var(--text3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 3rem; opacity: 0; transform: translateY(16px); transition: opacity 0.6s 0.2s, transform 0.6s 0.2s; }
   .subtitle.visible { opacity: 1; transform: translateY(0); }
-
-  .input-area {
-    width: 100%;
-    max-width: 720px;
-    opacity: 0;
-    transform: translateY(16px);
-    transition: opacity 0.6s 0.3s, transform 0.6s 0.3s;
-  }
+  .input-area { width: 100%; max-width: 720px; opacity: 0; transform: translateY(16px); transition: opacity 0.6s 0.3s, transform 0.6s 0.3s; }
   .input-area.visible { opacity: 1; transform: translateY(0); }
-
-  textarea#extractInput {
-    width: 100%;
-    min-height: 200px;
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.25rem;
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    line-height: 1.7;
-    resize: vertical;
-    outline: none;
-    transition: border-color 0.3s, background 0.4s;
-  }
+  textarea#extractInput { width: 100%; min-height: 200px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.9rem; line-height: 1.7; resize: vertical; outline: none; transition: border-color 0.3s, background 0.4s; }
   textarea#extractInput::placeholder { color: var(--text4); }
   textarea#extractInput:focus { border-color: var(--border2); }
-
-  .btn {
-    margin-top: 1rem;
-    width: 100%;
-    padding: 1rem;
-    background: var(--btn-bg);
-    color: var(--btn-text);
-    border: none;
-    border-radius: 10px;
-    font-family: 'Syne', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s, background 0.4s, color 0.4s;
-  }
+  .btn { margin-top: 1rem; width: 100%; padding: 1rem; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: opacity 0.2s, transform 0.15s, background 0.4s, color 0.4s; }
   .btn:hover { opacity: 0.9; }
   .btn:active { transform: scale(0.99); }
   .btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
   .error-msg { margin-top: 1rem; color: var(--error); font-size: 0.85rem; text-align: center; opacity: 0; transition: opacity 0.3s; }
   .error-msg.show { opacity: 1; }
 
-  .results-section {
-    width: 100%;
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 0 2rem 6rem;
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
+  .results-section { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 2rem 6rem; opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
   .results-section.visible { opacity: 1; transform: translateY(0); }
-
   .divider { width: 100%; height: 1px; background: var(--divider); margin: 3rem 0; }
-
-  .section-label {
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: 1.25rem;
-    opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.5s, transform 0.5s;
-  }
+  .section-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text3); margin-bottom: 1.25rem; opacity: 0; transform: translateY(8px); transition: opacity 0.5s, transform 0.5s; }
   .section-label.visible { opacity: 1; transform: translateY(0); }
-
   .summary-block { margin-bottom: 3rem; }
   .summary-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
-  .summary-bullets li {
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: var(--text2);
-    padding-left: 1.2rem;
-    position: relative;
-    opacity: 0;
-    transform: translateX(-8px);
-    transition: opacity 0.4s, transform 0.4s;
-  }
+  .summary-bullets li { font-size: 0.9rem; line-height: 1.6; color: var(--text2); padding-left: 1.2rem; position: relative; opacity: 0; transform: translateX(-8px); transition: opacity 0.4s, transform 0.4s; }
   .summary-bullets li.visible { opacity: 1; transform: translateX(0); }
   .summary-bullets li::before { content: '—'; position: absolute; left: 0; color: var(--text4); }
-
   .discussion-grid { display: flex; flex-direction: column; }
-  .dp-item {
-    padding: 1.1rem 0;
-    border-bottom: 1px solid var(--bg3);
-    opacity: 0;
-    transform: translateY(16px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    display: flex;
-    gap: 1.25rem;
-    align-items: flex-start;
-  }
+  .dp-item { padding: 1.1rem 0; border-bottom: 1px solid var(--bg3); opacity: 0; transform: translateY(16px); transition: opacity 0.4s ease, transform 0.4s ease; display: flex; gap: 1.25rem; align-items: flex-start; }
   .dp-item.visible { opacity: 1; transform: translateY(0); }
   .dp-num { font-family: 'Syne', sans-serif; font-size: 0.7rem; color: var(--text4); min-width: 24px; padding-top: 3px; }
   .dp-text { font-size: 0.9rem; line-height: 1.65; color: var(--text2); }
-
   .loading-dots { display: none; gap: 6px; justify-content: center; margin-top: 1.5rem; }
-  .loading-dots span {
-    width: 6px; height: 6px;
-    background: var(--text4);
-    border-radius: 50%;
-    animation: pulse 1.2s ease-in-out infinite;
-  }
+  .loading-dots span { width: 6px; height: 6px; background: var(--text4); border-radius: 50%; animation: pulse 1.2s ease-in-out infinite; }
   .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
   .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-  @keyframes pulse {
-    0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
-    40% { opacity: 1; transform: scale(1); }
-  }
-  @keyframes fadeUp {
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
-<!-- AUTH PAGE -->
 <div class="page auth-page active" id="authPage">
   <div class="auth-box">
     <div class="auth-logo">Nobody Likes Reading HW;</div>
@@ -632,16 +157,12 @@
   </div>
 </div>
 
-<!-- MAIN APP PAGE -->
 <div class="page app-page" id="appPage">
-
   <div class="topbar" id="topbar">
     <button class="icon-btn" onclick="openSettings()" title="Settings">⚙</button>
     <button class="icon-btn" onclick="handleSignOut()" title="Sign out">↩</button>
   </div>
-
   <div class="overlay" id="overlay" onclick="closeSettings()"></div>
-
   <div class="settings-panel" id="settingsPanel">
     <div class="settings-header">
       <h2>Settings</h2>
@@ -694,7 +215,7 @@
     <div class="input-area" id="inputArea">
       <textarea id="extractInput" placeholder="Paste your extract here..."></textarea>
       <div class="loading-dots" id="loadingDots"><span></span><span></span><span></span></div>
-      <div class="error-msg" id="errorMsg">Something went wrong. Check your API key in settings.</div>
+      <div class="error-msg" id="errorMsg"></div>
       <button class="btn" id="generateBtn" onclick="generate()">Generate Discussion Points</button>
     </div>
   </div>
@@ -710,7 +231,6 @@
       <div class="discussion-grid" id="dpGrid"></div>
     </div>
   </div>
-
 </div>
 
 <script>
@@ -721,15 +241,10 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const PRESETS = [
   {
-    id: 0,
-    name: 'Quick bullets',
     prompt: `You are analysing a text extract. Return ONLY valid JSON, no markdown, no backticks, no explanation.
 
 Return this exact structure:
-{
-  "summary": ["bullet 1", "bullet 2", "bullet 3", "bullet 4", "bullet 5"],
-  "discussion_points": ["point 1", "point 2", "point 3", "point 4", "point 5", "point 6", "point 7", "point 8", "point 9", "point 10"]
-}
+{"summary":["bullet 1","bullet 2","bullet 3","bullet 4","bullet 5"],"discussion_points":["point 1","point 2","point 3","point 4","point 5","point 6","point 7","point 8","point 9","point 10"]}
 
 Rules:
 - Summary: 4-5 concise bullet points covering the key content
@@ -739,19 +254,14 @@ Extract:
 {{EXTRACT}}`
   },
   {
-    id: 1,
-    name: 'Detailed paragraphs',
     prompt: `You are analysing a text extract. Return ONLY valid JSON, no markdown, no backticks, no explanation.
 
 Return this exact structure:
-{
-  "summary": ["paragraph 1", "paragraph 2", "paragraph 3"],
-  "discussion_points": ["point 1", "point 2", "point 3", "point 4", "point 5", "point 6", "point 7", "point 8", "point 9", "point 10"]
-}
+{"summary":["paragraph 1","paragraph 2","paragraph 3"],"discussion_points":["point 1","point 2","point 3","point 4","point 5","point 6","point 7","point 8","point 9","point 10"]}
 
 Rules:
-- Summary: write a detailed summary using only information explicitly stated in the text. Do not add outside context. Write it as 2-3 flowing paragraphs covering every key point in the order they appear. Each paragraph goes in a separate array entry.
-- Discussion points: exactly 10. Each one is a maximum of two sentences — one sentence setting up an idea or observation from the text, followed by a question that challenges the reader to think about it. Accessible and conversational in tone, not academic. Rooted strictly in what the text says. No titles or numbers, just plain text.
+- Summary: detailed, using only information explicitly stated in the text. No outside context. 2-3 flowing paragraphs covering every key point in order. Each paragraph is a separate array entry.
+- Discussion points: exactly 10. Each is max two sentences — one setting up an idea from the text, one question challenging the reader. Conversational tone, not academic. No titles or numbers.
 
 Extract:
 {{EXTRACT}}`
@@ -762,21 +272,12 @@ let selectedPreset = 0;
 
 function selectPreset(id) {
   selectedPreset = id;
-  document.querySelectorAll('.preset-btn').forEach((btn, i) => {
-    btn.classList.toggle('active', i === id);
-  });
-  const customWrap = document.getElementById('customPromptWrap');
-  if (id === 2) {
-    customWrap.classList.add('open');
-  } else {
-    customWrap.classList.remove('open');
-  }
+  document.querySelectorAll('.preset-btn').forEach((btn, i) => btn.classList.toggle('active', i === id));
+  document.getElementById('customPromptWrap').classList.toggle('open', id === 2);
 }
 
 function getActivePrompt() {
-  if (selectedPreset === 2) {
-    return document.getElementById('promptInput').value || PRESETS[0].prompt;
-  }
+  if (selectedPreset === 2) return document.getElementById('promptInput').value || PRESETS[0].prompt;
   return PRESETS[selectedPreset].prompt;
 }
 
@@ -836,11 +337,7 @@ function transitionPage(fromId, toId) {
   const to = document.getElementById(toId);
   from.classList.add('exit');
   from.classList.remove('active');
-  setTimeout(() => {
-    from.classList.remove('exit');
-    to.classList.add('active');
-    window.scrollTo(0, 0);
-  }, 500);
+  setTimeout(() => { from.classList.remove('exit'); to.classList.add('active'); window.scrollTo(0,0); }, 500);
 }
 
 function goToApp() {
@@ -860,10 +357,7 @@ function goToApp() {
 async function handleSignOut() {
   await sb.auth.signOut();
   transitionPage('appPage', 'authPage');
-  document.getElementById('topbar').classList.remove('visible');
-  document.getElementById('heroTitle').classList.remove('visible');
-  document.getElementById('heroSubtitle').classList.remove('visible');
-  document.getElementById('inputArea').classList.remove('visible');
+  ['topbar','heroTitle','heroSubtitle','inputArea'].forEach(id => document.getElementById(id).classList.remove('visible'));
   document.getElementById('results').classList.remove('visible');
   document.getElementById('emailInput').value = '';
   document.getElementById('passwordInput').value = '';
@@ -898,14 +392,13 @@ function saveSettings() {
   setTimeout(() => notice.classList.remove('show'), 2000);
 }
 
-function openSettings() {
-  document.getElementById('settingsPanel').classList.add('open');
-  document.getElementById('overlay').classList.add('active');
-}
+function openSettings() { document.getElementById('settingsPanel').classList.add('open'); document.getElementById('overlay').classList.add('active'); }
+function closeSettings() { document.getElementById('settingsPanel').classList.remove('open'); document.getElementById('overlay').classList.remove('active'); }
 
-function closeSettings() {
-  document.getElementById('settingsPanel').classList.remove('open');
-  document.getElementById('overlay').classList.remove('active');
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('show');
 }
 
 async function generate() {
@@ -913,12 +406,7 @@ async function generate() {
   if (!extract) return;
 
   const apiKey = localStorage.getItem('discuss_apikey') || '';
-  if (!apiKey) {
-    const err = document.getElementById('errorMsg');
-    err.textContent = 'Add your Gemini API key in Settings first.';
-    err.classList.add('show');
-    return;
-  }
+  if (!apiKey) { showError('Add your Gemini API key in Settings first.'); return; }
 
   const prompt = getActivePrompt().replace('{{EXTRACT}}', extract);
   const btn = document.getElementById('generateBtn');
@@ -932,6 +420,7 @@ async function generate() {
   results.classList.remove('visible');
 
   try {
+    console.log('Sending request to Gemini...');
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
@@ -939,18 +428,37 @@ async function generate() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 1500 }
+          generationConfig: { temperature: 0.7, maxOutputTokens: 2000 }
         })
       }
     );
+
+    console.log('HTTP status:', res.status);
     const data = await res.json();
+    console.log('Full API response:', JSON.stringify(data, null, 2));
+
+    if (!res.ok) {
+      const msg = data?.error?.message || `API error ${res.status}`;
+      console.error('API error:', msg);
+      showError(`API error: ${msg}`);
+      return;
+    }
+
     const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    console.log('Raw text:', raw);
+
+    if (!raw) {
+      showError('No response from API. Check console for details.');
+      return;
+    }
+
     const clean = raw.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
     renderResults(parsed.summary, parsed.discussion_points);
+
   } catch(e) {
-    errMsg.textContent = 'Something went wrong. Check your API key in settings.';
-    errMsg.classList.add('show');
+    console.error('Caught error:', e);
+    showError(`Error: ${e.message}`);
   } finally {
     btn.disabled = false;
     dots.style.display = 'none';
@@ -995,13 +503,8 @@ function renderResults(summary, points) {
   }, 400);
 }
 
-sb.auth.getSession().then(({ data }) => {
-  if (data?.session) goToApp();
-});
-
-document.getElementById('passwordInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') handleAuth();
-});
+sb.auth.getSession().then(({ data }) => { if (data?.session) goToApp(); });
+document.getElementById('passwordInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleAuth(); });
 </script>
 </body>
 </html>
