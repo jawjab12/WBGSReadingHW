@@ -27,11 +27,11 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; transition: background 0.4s, color 0.4s; }
-
+ 
   .page { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; opacity: 0; transform: translateY(24px); pointer-events: none; transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1), transform 0.5s cubic-bezier(0.4,0,0.2,1); overflow-y: auto; }
   .page.active { opacity: 1; transform: translateY(0); pointer-events: all; position: relative; min-height: 100vh; }
   .page.exit { opacity: 0; transform: translateY(-24px); pointer-events: none; position: fixed; }
-
+ 
   .auth-page { background: var(--bg); background-image: radial-gradient(ellipse 80% 60% at 50% 0%, #1a1a1a 0%, #080808 70%); }
   :root[data-theme="light"] .auth-page { background-image: radial-gradient(ellipse 80% 60% at 50% 0%, #e8e8e3 0%, #f5f5f0 70%); }
   .auth-box { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 0; }
@@ -57,7 +57,7 @@
   .auth-error.show { opacity: 1; }
   .auth-success { font-size: 0.8rem; color: #5a9e6f; text-align: center; min-height: 1.2rem; transition: opacity 0.3s; opacity: 0; }
   .auth-success.show { opacity: 1; }
-
+ 
   .app-page { background: var(--bg); }
   .topbar { position: fixed; top: 0; right: 0; padding: 1rem 1.5rem; z-index: 100; display: flex; gap: 8px; align-items: center; opacity: 0; transform: translateY(-8px); transition: opacity 0.4s, transform 0.4s; }
   .topbar.visible { opacity: 1; transform: translateY(0); }
@@ -91,7 +91,7 @@
   .saved-notice.show { opacity: 1; }
   .hint { font-size: 0.75rem; color: var(--text4); margin-top: 0.4rem; line-height: 1.5; }
   .user-email { font-size: 0.75rem; color: var(--text3); text-align: center; padding: 0.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg2); word-break: break-all; }
-
+ 
   .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 2rem; background: var(--hero-grad); }
   .hero-title { font-family: 'Syne', sans-serif; font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700; letter-spacing: -0.03em; color: var(--text); margin-bottom: 0.5rem; text-align: center; opacity: 0; transform: translateY(20px); transition: opacity 0.6s 0.1s, transform 0.6s 0.1s; }
   .hero-title.visible { opacity: 1; transform: translateY(0); }
@@ -112,26 +112,24 @@
   .loading-dots span { width: 6px; height: 6px; background: var(--text4); border-radius: 50%; animation: pulse 1.2s ease-in-out infinite; }
   .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
   .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-  /* RESULTS LAYOUT */
+ 
   .results-section { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 2rem 6rem; opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
   .results-section.visible { opacity: 1; transform: translateY(0); }
   .divider { width: 100%; height: 1px; background: var(--divider); margin: 3rem 0; }
-
+  .share-bar { display: flex; justify-content: flex-end; margin-bottom: 1rem; opacity: 0; transform: translateY(8px); transition: opacity 0.5s 0.2s, transform 0.5s 0.2s; }
+  .share-bar.visible { opacity: 1; transform: translateY(0); }
+  .share-btn { background: none; border: 1px solid var(--border2); color: var(--text3); padding: 0.45rem 0.9rem; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.78rem; cursor: pointer; transition: border-color 0.2s, color 0.2s, background 0.2s; display: flex; align-items: center; gap: 0.4rem; }
+  .share-btn:hover { color: var(--text2); background: var(--bg2); border-color: var(--border2); }
+  .share-btn.copied { color: #5a9e6f; border-color: #5a9e6f; }
   .results-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 3rem; align-items: start; }
   @media (max-width: 700px) { .results-grid { grid-template-columns: 1fr; gap: 2rem; } }
-
   .section-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text3); margin-bottom: 1.25rem; opacity: 0; transform: translateY(8px); transition: opacity 0.5s, transform 0.5s; }
   .section-label.visible { opacity: 1; transform: translateY(0); }
-
-  /* SUMMARY SIDE */
   .summary-col { position: sticky; top: 2rem; }
   .summary-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
   .summary-bullets li { font-size: 0.88rem; line-height: 1.65; color: var(--text2); padding-left: 1.2rem; position: relative; opacity: 0; transform: translateX(-8px); transition: opacity 0.4s, transform 0.4s; }
   .summary-bullets li.visible { opacity: 1; transform: translateX(0); }
   .summary-bullets li::before { content: '—'; position: absolute; left: 0; color: var(--text4); }
-
-  /* DISCUSSION POINTS SIDE */
   .dp-col { display: flex; flex-direction: column; gap: 0.75rem; }
   .dp-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 1rem 1.1rem; opacity: 0; transform: translateY(16px); transition: opacity 0.4s ease, transform 0.4s ease, border-color 0.2s; display: flex; gap: 0.9rem; align-items: flex-start; position: relative; }
   .dp-card:hover { border-color: var(--border2); }
@@ -142,13 +140,13 @@
   .dp-card:hover .copy-btn { opacity: 1; }
   .copy-btn:hover { color: var(--text2); background: var(--border); }
   .copy-btn.copied { opacity: 1; color: #5a9e6f; }
-
+ 
   @keyframes pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
   @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
-
+ 
 <div class="page auth-page active" id="authPage">
   <div class="auth-box">
     <div class="auth-logo">Nobody Likes Reading HW;</div>
@@ -172,10 +170,10 @@
     </div>
   </div>
 </div>
-
+ 
 <div class="page app-page" id="appPage">
   <div class="topbar" id="topbar">
-    <button class="icon-btn" onclick="openSettings()" title="Adv Settings">⚙</button>
+    <button class="icon-btn" onclick="openSettings()" title="Settings">⚙</button>
     <button class="icon-btn" onclick="handleSignOut()" title="Sign out">↩</button>
   </div>
   <div class="overlay" id="overlay" onclick="closeSettings()"></div>
@@ -224,7 +222,7 @@
     <button class="save-btn" onclick="saveSettings()">Save Settings</button>
     <p class="saved-notice" id="savedNotice">Saved.</p>
   </div>
-
+ 
   <div class="hero">
     <h1 class="hero-title" id="heroTitle">Nobody likes reading HW;</h1>
     <p class="subtitle" id="heroSubtitle">Let's save you some time</p>
@@ -235,9 +233,12 @@
       <button class="btn" id="generateBtn" onclick="generate()">Generate Discussion Points</button>
     </div>
   </div>
-
+ 
   <div class="results-section" id="results">
     <div class="divider"></div>
+    <div class="share-bar" id="shareBar">
+      <button class="share-btn" id="shareBtn" onclick="shareResults()">↗ Share</button>
+    </div>
     <div class="results-grid">
       <div class="summary-col">
         <p class="section-label" id="summaryLabel">Summary</p>
@@ -250,31 +251,33 @@
     </div>
   </div>
 </div>
-
+ 
 <script>
 const SUPABASE_URL = 'https://qoaiyonsysmkhdmitofv.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvYWl5b25zeXNta2hkbWl0b2Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMDMyNzYsImV4cCI6MjA5NDg3OTI3Nn0.Z3fIl8bHdtPczJ9dJHMS4LKFueVNQJhKmUe4YXWLnVQ';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
-
+ 
 const PRESETS = [
   { prompt: `You are analysing a text extract. Return ONLY valid JSON, no markdown, no backticks, no explanation.\n\nReturn this exact structure:\n{"summary":["bullet 1","bullet 2","bullet 3","bullet 4","bullet 5"],"discussion_points":["point 1","point 2","point 3","point 4","point 5","point 6","point 7","point 8","point 9","point 10"]}\n\nRules:\n- Summary: 4-5 concise bullet points covering the key content\n- Discussion points: exactly 10, punchy, no fluff, 1-2 sentences max each, no prefixes or numbering\n\nExtract:\n{{EXTRACT}}` },
   { prompt: `You are analysing a text extract. Return ONLY valid JSON, no markdown, no backticks, no explanation.\n\nReturn this exact structure:\n{"summary":["paragraph 1","paragraph 2","paragraph 3"],"discussion_points":["point 1","point 2","point 3","point 4","point 5","point 6","point 7","point 8","point 9","point 10"]}\n\nRules:\n- Summary: detailed, using only information explicitly stated in the text. No outside context. 2-3 flowing paragraphs covering every key point in order. Each paragraph is a separate array entry.\n- Discussion points: exactly 10. Each is max two sentences — one setting up an idea from the text, one question challenging the reader. Conversational tone, not academic. No titles or numbers.\n\nExtract:\n{{EXTRACT}}` }
 ];
-
+ 
 let selectedPreset = 0;
-
+let currentSummary = [];
+let currentPoints = [];
+ 
 function selectPreset(id) {
   selectedPreset = id;
   document.querySelectorAll('.preset-btn').forEach((btn, i) => btn.classList.toggle('active', i === id));
   document.getElementById('customPromptWrap').classList.toggle('open', id === 2);
 }
-
+ 
 function getActivePrompt() {
   if (selectedPreset === 2) return document.getElementById('promptInput').value || PRESETS[0].prompt;
   return PRESETS[selectedPreset].prompt;
 }
-
+ 
 let currentTab = 'login';
 function switchTab(tab) {
   currentTab = tab;
@@ -289,7 +292,7 @@ function clearAuthMessages() {
 }
 function showAuthError(msg) { const el = document.getElementById('authError'); el.textContent = msg; el.classList.add('show'); }
 function showAuthSuccess(msg) { const el = document.getElementById('authSuccess'); el.textContent = msg; el.classList.add('show'); }
-
+ 
 async function handleAuth() {
   const email = document.getElementById('emailInput').value.trim();
   const password = document.getElementById('passwordInput').value;
@@ -311,7 +314,7 @@ async function handleAuth() {
   } catch(e) { showAuthError('Something went wrong. Try again.'); }
   btn.disabled = false;
 }
-
+ 
 function transitionPage(fromId, toId) {
   const from = document.getElementById(fromId);
   const to = document.getElementById(toId);
@@ -319,7 +322,7 @@ function transitionPage(fromId, toId) {
   from.classList.remove('active');
   setTimeout(() => { from.classList.remove('exit'); to.classList.add('active'); window.scrollTo(0,0); }, 500);
 }
-
+ 
 function goToApp() {
   transitionPage('authPage', 'appPage');
   loadSettings();
@@ -331,18 +334,19 @@ function goToApp() {
   }, 300);
   sb.auth.getUser().then(({ data }) => { if (data?.user) document.getElementById('userEmail').textContent = data.user.email; });
 }
-
+ 
 async function handleSignOut() {
   await sb.auth.signOut();
   transitionPage('appPage', 'authPage');
   ['topbar','heroTitle','heroSubtitle','inputArea'].forEach(id => document.getElementById(id).classList.remove('visible'));
   document.getElementById('results').classList.remove('visible');
+  document.getElementById('shareBar').classList.remove('visible');
   document.getElementById('emailInput').value = '';
   document.getElementById('passwordInput').value = '';
   clearAuthMessages();
   switchTab('login');
 }
-
+ 
 function loadSettings() {
   const theme = localStorage.getItem('discuss_theme') || 'dark';
   const apiKey = localStorage.getItem('discuss_apikey') || '';
@@ -353,14 +357,14 @@ function loadSettings() {
   document.getElementById('promptInput').value = customPrompt;
   selectPreset(savedPreset);
 }
-
+ 
 function setTheme(t, silent) {
   document.documentElement.setAttribute('data-theme', t);
   document.getElementById('darkOpt').classList.toggle('active', t === 'dark');
   document.getElementById('lightOpt').classList.toggle('active', t === 'light');
   if (!silent) localStorage.setItem('discuss_theme', t);
 }
-
+ 
 function saveSettings() {
   localStorage.setItem('discuss_apikey', document.getElementById('apiKeyInput').value.trim());
   localStorage.setItem('discuss_preset', selectedPreset);
@@ -369,31 +373,30 @@ function saveSettings() {
   notice.classList.add('show');
   setTimeout(() => notice.classList.remove('show'), 2000);
 }
-
+ 
 function openSettings() { document.getElementById('settingsPanel').classList.add('open'); document.getElementById('overlay').classList.add('active'); }
 function closeSettings() { document.getElementById('settingsPanel').classList.remove('open'); document.getElementById('overlay').classList.remove('active'); }
-
 function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.classList.add('show'); }
-
+ 
 async function generate() {
   const extract = document.getElementById('extractInput').value.trim();
   if (!extract) return;
   const apiKey = localStorage.getItem('discuss_apikey') || '';
   if (!apiKey) { showError('Add your Gemini API key in Settings first.'); return; }
-
+ 
   const prompt = getActivePrompt().replace('{{EXTRACT}}', extract);
   const btn = document.getElementById('generateBtn');
   const dots = document.getElementById('loadingDots');
   const errMsg = document.getElementById('errorMsg');
   const results = document.getElementById('results');
-
+ 
   btn.disabled = true;
   dots.style.display = 'flex';
   errMsg.classList.remove('show');
   results.classList.remove('visible');
-
+  document.getElementById('shareBar').classList.remove('visible');
+ 
   try {
-    console.log('Sending request to Gemini...');
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
@@ -405,31 +408,62 @@ async function generate() {
         })
       }
     );
-    console.log('HTTP status:', res.status);
     const data = await res.json();
-    console.log('Full API response:', JSON.stringify(data, null, 2));
-
-    if (!res.ok) {
-      const msg = data?.error?.message || `API error ${res.status}`;
-      showError(`API error: ${msg}`);
-      return;
-    }
-
+    if (!res.ok) { showError(`API error: ${data?.error?.message || res.status}`); return; }
     const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    if (!raw) { showError('No response from API. Check console for details.'); return; }
-
+    if (!raw) { showError('No response from API.'); return; }
     const clean = raw.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
-    renderResults(parsed.summary, parsed.discussion_points);
+    currentSummary = parsed.summary;
+    currentPoints = parsed.discussion_points;
+    renderResults(currentSummary, currentPoints);
   } catch(e) {
-    console.error('Caught error:', e);
     showError(`Error: ${e.message}`);
   } finally {
     btn.disabled = false;
     dots.style.display = 'none';
   }
 }
-
+ 
+async function shareResults() {
+  const btn = document.getElementById('shareBtn');
+  btn.textContent = '...';
+  btn.disabled = true;
+  try {
+    const id = Math.random().toString(36).substring(2, 10);
+    const { error } = await sb.from('shares').insert({ id, summary: currentSummary, discussion_points: currentPoints });
+    if (error) throw error;
+    const url = `${location.origin}${location.pathname}#share=${id}`;
+    await navigator.clipboard.writeText(url);
+    btn.textContent = '✓ Link copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '↗ Share'; btn.classList.remove('copied'); btn.disabled = false; }, 2500);
+  } catch(e) {
+    btn.textContent = '↗ Share';
+    btn.disabled = false;
+    showError('Could not create share link.');
+  }
+}
+ 
+async function loadSharedResults() {
+  const hash = location.hash;
+  if (!hash.startsWith('#share=')) return false;
+  const id = hash.replace('#share=', '');
+  const { data, error } = await sb.from('shares').select('*').eq('id', id).single();
+  if (error || !data) return false;
+  transitionPage('authPage', 'appPage');
+  setTimeout(() => {
+    document.getElementById('topbar').classList.add('visible');
+    document.getElementById('heroTitle').classList.add('visible');
+    document.getElementById('heroSubtitle').classList.add('visible');
+    document.getElementById('inputArea').classList.add('visible');
+  }, 300);
+  currentSummary = data.summary;
+  currentPoints = data.discussion_points;
+  renderResults(currentSummary, currentPoints, true);
+  return true;
+}
+ 
 function copyPoint(btn, text) {
   navigator.clipboard.writeText(text).then(() => {
     btn.textContent = '✓';
@@ -437,19 +471,19 @@ function copyPoint(btn, text) {
     setTimeout(() => { btn.textContent = '⎘'; btn.classList.remove('copied'); }, 1500);
   });
 }
-
-function renderResults(summary, points) {
+ 
+function renderResults(summary, points, isShared = false) {
   const summaryList = document.getElementById('summaryList');
   const dpGrid = document.getElementById('dpGrid');
   summaryList.innerHTML = '';
   dpGrid.innerHTML = '';
-
+ 
   summary.forEach(s => {
     const li = document.createElement('li');
     li.textContent = s;
     summaryList.appendChild(li);
   });
-
+ 
   points.forEach((p, i) => {
     const div = document.createElement('div');
     div.className = 'dp-card';
@@ -457,25 +491,31 @@ function renderResults(summary, points) {
     div.innerHTML = `<span class="dp-num">${num}</span><span class="dp-text">${p}</span><button class="copy-btn" title="Copy" onclick="copyPoint(this, ${JSON.stringify(p)})">⎘</button>`;
     dpGrid.appendChild(div);
   });
-
+ 
   const results = document.getElementById('results');
   results.classList.add('visible');
   results.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
+ 
+  if (!isShared) setTimeout(() => document.getElementById('shareBar').classList.add('visible'), 600);
+ 
   setTimeout(() => {
     document.getElementById('summaryLabel').classList.add('visible');
     document.getElementById('dpLabel').classList.add('visible');
-    document.querySelectorAll('.summary-bullets li').forEach((el, i) => {
-      setTimeout(() => el.classList.add('visible'), i * 80);
-    });
-    document.querySelectorAll('.dp-card').forEach((el, i) => {
-      setTimeout(() => el.classList.add('visible'), i * 60);
-    });
+    document.querySelectorAll('.summary-bullets li').forEach((el, i) => setTimeout(() => el.classList.add('visible'), i * 80));
+    document.querySelectorAll('.dp-card').forEach((el, i) => setTimeout(() => el.classList.add('visible'), i * 60));
   }, 400);
 }
-
-sb.auth.getSession().then(({ data }) => { if (data?.session) goToApp(); });
+ 
+(async () => {
+  const isShared = await loadSharedResults();
+  if (!isShared) {
+    const { data } = await sb.auth.getSession();
+    if (data?.session) goToApp();
+  }
+})();
+ 
 document.getElementById('passwordInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleAuth(); });
 </script>
 </body>
 </html>
+ 
