@@ -32,31 +32,6 @@
   .page.active { opacity: 1; transform: translateY(0); pointer-events: all; position: relative; min-height: 100vh; }
   .page.exit { opacity: 0; transform: translateY(-24px); pointer-events: none; position: fixed; }
  
-  .auth-page { background: var(--bg); background-image: radial-gradient(ellipse 80% 60% at 50% 0%, #1a1a1a 0%, #080808 70%); }
-  :root[data-theme="light"] .auth-page { background-image: radial-gradient(ellipse 80% 60% at 50% 0%, #e8e8e3 0%, #f5f5f0 70%); }
-  .auth-box { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 0; }
-  .auth-logo { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: -0.03em; color: var(--text); margin-bottom: 0.3rem; opacity: 0; transform: translateY(16px); animation: fadeUp 0.6s 0.1s cubic-bezier(0.4,0,0.2,1) forwards; }
-  .auth-tagline { font-size: 0.8rem; color: var(--text3); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2.5rem; opacity: 0; transform: translateY(16px); animation: fadeUp 0.6s 0.2s cubic-bezier(0.4,0,0.2,1) forwards; }
-  .auth-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 2rem; opacity: 0; transform: translateY(16px); animation: fadeUp 0.6s 0.3s cubic-bezier(0.4,0,0.2,1) forwards; }
-  .auth-tab { flex: 1; background: none; border: none; padding: 0.75rem 0; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--text3); cursor: pointer; position: relative; transition: color 0.3s; }
-  .auth-tab::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 1px; background: var(--text); transform: scaleX(0); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
-  .auth-tab.active { color: var(--text); }
-  .auth-tab.active::after { transform: scaleX(1); }
-  .auth-form { display: flex; flex-direction: column; gap: 1rem; opacity: 0; transform: translateY(16px); animation: fadeUp 0.6s 0.4s cubic-bezier(0.4,0,0.2,1) forwards; }
-  .field-wrap { position: relative; }
-  .field-wrap input { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 1.4rem 1rem 0.4rem; color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.3s; }
-  .field-wrap input::placeholder { color: transparent; }
-  .field-wrap input:focus { border-color: var(--border2); }
-  .field-label { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 0.85rem; color: var(--text4); pointer-events: none; transition: all 0.25s cubic-bezier(0.4,0,0.2,1); }
-  .field-wrap input:focus ~ .field-label, .field-wrap input:not(:placeholder-shown) ~ .field-label { top: 0.3rem; font-size: 0.65rem; letter-spacing: 0.08em; color: var(--text3); transform: none; }
-  .auth-btn { width: 100%; padding: 1rem; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: opacity 0.2s, transform 0.15s; margin-top: 0.5rem; }
-  .auth-btn:hover { opacity: 0.88; }
-  .auth-btn:active { transform: scale(0.99); }
-  .auth-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-  .auth-error { font-size: 0.8rem; color: var(--error); text-align: center; min-height: 1.2rem; transition: opacity 0.3s; opacity: 0; }
-  .auth-error.show { opacity: 1; }
-  .auth-success { font-size: 0.8rem; color: #5a9e6f; text-align: center; min-height: 1.2rem; transition: opacity 0.3s; opacity: 0; }
-  .auth-success.show { opacity: 1; }
  
   .app-page { background: var(--bg); }
   .topbar { position: fixed; top: 0; right: 0; padding: 1rem 1.5rem; z-index: 100; display: flex; gap: 8px; align-items: center; opacity: 0; transform: translateY(-8px); transition: opacity 0.4s, transform 0.4s; }
@@ -90,7 +65,6 @@
   .saved-notice { font-size: 0.75rem; color: var(--text3); text-align: center; opacity: 0; transition: opacity 0.3s; }
   .saved-notice.show { opacity: 1; }
   .hint { font-size: 0.75rem; color: var(--text4); margin-top: 0.4rem; line-height: 1.5; }
-  .user-email { font-size: 0.75rem; color: var(--text3); text-align: center; padding: 0.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg2); word-break: break-all; }
  
   .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 2rem; background: var(--hero-grad); }
   .hero-title { font-family: 'Syne', sans-serif; font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700; letter-spacing: -0.03em; color: var(--text); margin-bottom: 0.5rem; text-align: center; opacity: 0; transform: translateY(20px); transition: opacity 0.6s 0.1s, transform 0.6s 0.1s; }
@@ -147,44 +121,15 @@
 </head>
 <body>
  
-<div class="page auth-page active" id="authPage">
-  <div class="auth-box">
-    <div class="auth-logo">Nobody Likes Reading HW;</div>
-    <div class="auth-tagline">Lets save you some time...</div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Sign in</button>
-      <button class="auth-tab" id="signupTab" onclick="switchTab('signup')">Create account</button>
-    </div>
-    <div class="auth-form">
-      <div class="field-wrap">
-        <input type="email" id="emailInput" placeholder=" " autocomplete="email">
-        <span class="field-label">Email</span>
-      </div>
-      <div class="field-wrap">
-        <input type="password" id="passwordInput" placeholder=" " autocomplete="current-password">
-        <span class="field-label">Password</span>
-      </div>
-      <div class="auth-error" id="authError"></div>
-      <div class="auth-success" id="authSuccess"></div>
-      <button class="auth-btn" id="authBtn" onclick="handleAuth()">Sign in</button>
-    </div>
-  </div>
-</div>
- 
-<div class="page app-page" id="appPage">
+<div class="page app-page active" id="appPage">
   <div class="topbar" id="topbar">
     <button class="icon-btn" onclick="openSettings()" title="Settings">⚙</button>
-    <button class="icon-btn" onclick="handleSignOut()" title="Sign out">↩</button>
   </div>
   <div class="overlay" id="overlay" onclick="closeSettings()"></div>
   <div class="settings-panel" id="settingsPanel">
     <div class="settings-header">
       <h2>Settings</h2>
       <button class="close-btn" onclick="closeSettings()">✕</button>
-    </div>
-    <div class="setting-group">
-      <label>Account</label>
-      <div class="user-email" id="userEmail">—</div>
     </div>
     <div class="setting-group">
       <label>Theme</label>
@@ -278,53 +223,10 @@ function getActivePrompt() {
   return PRESETS[selectedPreset].prompt;
 }
  
-let currentTab = 'login';
-function switchTab(tab) {
-  currentTab = tab;
-  document.getElementById('loginTab').classList.toggle('active', tab === 'login');
-  document.getElementById('signupTab').classList.toggle('active', tab === 'signup');
-  document.getElementById('authBtn').textContent = tab === 'login' ? 'Sign in' : 'Create account';
-  clearAuthMessages();
-}
-function clearAuthMessages() {
-  document.getElementById('authError').classList.remove('show');
-  document.getElementById('authSuccess').classList.remove('show');
-}
-function showAuthError(msg) { const el = document.getElementById('authError'); el.textContent = msg; el.classList.add('show'); }
-function showAuthSuccess(msg) { const el = document.getElementById('authSuccess'); el.textContent = msg; el.classList.add('show'); }
  
-async function handleAuth() {
-  const email = document.getElementById('emailInput').value.trim();
-  const password = document.getElementById('passwordInput').value;
-  const btn = document.getElementById('authBtn');
-  if (!email || !password) { showAuthError('Please fill in all fields.'); return; }
-  btn.disabled = true;
-  clearAuthMessages();
-  try {
-    if (currentTab === 'login') {
-      const { error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) { showAuthError(error.message); btn.disabled = false; return; }
-      goToApp();
-    } else {
-      const { error } = await sb.auth.signUp({ email, password });
-      if (error) { showAuthError(error.message); btn.disabled = false; return; }
-      showAuthSuccess('Account created! Check your email to confirm, then sign in.');
-      switchTab('login');
-    }
-  } catch(e) { showAuthError('Something went wrong. Try again.'); }
-  btn.disabled = false;
-}
  
-function transitionPage(fromId, toId) {
-  const from = document.getElementById(fromId);
-  const to = document.getElementById(toId);
-  from.classList.add('exit');
-  from.classList.remove('active');
-  setTimeout(() => { from.classList.remove('exit'); to.classList.add('active'); window.scrollTo(0,0); }, 500);
-}
  
 function goToApp() {
-  transitionPage('authPage', 'appPage');
   loadSettings();
   setTimeout(() => {
     document.getElementById('topbar').classList.add('visible');
@@ -332,20 +234,8 @@ function goToApp() {
     document.getElementById('heroSubtitle').classList.add('visible');
     document.getElementById('inputArea').classList.add('visible');
   }, 300);
-  sb.auth.getUser().then(({ data }) => { if (data?.user) document.getElementById('userEmail').textContent = data.user.email; });
 }
  
-async function handleSignOut() {
-  await sb.auth.signOut();
-  transitionPage('appPage', 'authPage');
-  ['topbar','heroTitle','heroSubtitle','inputArea'].forEach(id => document.getElementById(id).classList.remove('visible'));
-  document.getElementById('results').classList.remove('visible');
-  document.getElementById('shareBar').classList.remove('visible');
-  document.getElementById('emailInput').value = '';
-  document.getElementById('passwordInput').value = '';
-  clearAuthMessages();
-  switchTab('login');
-}
  
 function loadSettings() {
   const theme = localStorage.getItem('discuss_theme') || 'dark';
@@ -451,13 +341,7 @@ async function loadSharedResults() {
   const id = hash.replace('#share=', '');
   const { data, error } = await sb.from('shares').select('*').eq('id', id).single();
   if (error || !data) return false;
-  transitionPage('authPage', 'appPage');
-  setTimeout(() => {
-    document.getElementById('topbar').classList.add('visible');
-    document.getElementById('heroTitle').classList.add('visible');
-    document.getElementById('heroSubtitle').classList.add('visible');
-    document.getElementById('inputArea').classList.add('visible');
-  }, 300);
+  goToApp();
   currentSummary = data.summary;
   currentPoints = data.discussion_points;
   renderResults(currentSummary, currentPoints, true);
@@ -508,13 +392,9 @@ function renderResults(summary, points, isShared = false) {
  
 (async () => {
   const isShared = await loadSharedResults();
-  if (!isShared) {
-    const { data } = await sb.auth.getSession();
-    if (data?.session) goToApp();
-  }
+  if (!isShared) goToApp();
 })();
  
-document.getElementById('passwordInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleAuth(); });
 </script>
 </body>
 </html>
